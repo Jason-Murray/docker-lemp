@@ -1,0 +1,53 @@
+services:
+  mariadb:
+    image: mariadb:10.7.1
+    container_name: mariadb
+    restart: unless-stopped
+    volumes:
+      - ./mariadb/conf.d:/etc/mysql/conf.d
+      - ./mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - lemp-dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=default
+      - MYSQL_USER=default
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=secret
+    ports:
+      - "3306:3306"
+    networks:
+      - lemp-network
+
+  php-fpm:
+    depends_on:
+      - mariadb
+    build:
+      context: ./php-fpm
+    container_name: php-fpm
+    restart: unless-stopped
+    volumes:
+      - ../lemp-sites:/var/www/html
+    networks:
+      - lemp-network
+
+  nginx:
+    depends_on:
+      - php-fpm
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../lemp-sites:/var/www/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    networks:
+      - lemp-network
+
+volumes:
+  lemp-dbdata:
+
+networks:
+  lemp-network:
+    driver: bridge

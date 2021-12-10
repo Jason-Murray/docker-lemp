@@ -1,0 +1,10 @@
+-- Use this file to provision new DB's. It will run automatically when mariadb starts if the db
+-- volume doesn't exist or you can import it manually afterwards with:
+--
+-- docker-compose exec mariadb bash
+-- mysql -u root -p < /docker-entrypoint-initdb.d/createdb.sql
+
+-- CREATE DATABASE IF NOT EXISTS `newdb1` COLLATE 'utf8_general_ci' ;
+-- GRANT ALL ON `newdb1`.* TO 'newuser1'@'%' ;
+
+-- FLUSH PRIVILEGES ;
