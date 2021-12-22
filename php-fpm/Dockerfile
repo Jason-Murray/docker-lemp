@@ -51,6 +51,11 @@ RUN set -ex; \
 RUN apt-get update && apt-get install -y git unzip
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+# install wp-cli
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+	chmod +x wp-cli.phar && \
+	mv wp-cli.phar /usr/local/bin/wp
+
 WORKDIR /var/www/html
 CMD ["php-fpm"]
 
